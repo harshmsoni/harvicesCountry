@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import CountryCreatePage from './components/CountryCreatePage';
+import CountryUpdatePage from './components/CountryUpdatePage';
+import CountrySearchPage from './components/CountrySearchPage';
 
 function App() {
+  const [token, setToken] = useState('');
+
+  const handleLogin = (token) => {
+    console.log('Logged in successfully. Token:', token);
+    setToken(token);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <div>
+        <Routes>
+          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          {token ? (
+            <>
+              <Route path="/country-create" element={<CountryCreatePage token={token} />} />
+              <Route path="/country-update" element={<CountryUpdatePage token={token} />} />
+              <Route path="/country-search" element={<CountrySearchPage token={token} />} />
+              <Route path="/*" element={<Navigate to="/country-search" />} />
+            </>
+          ) : (
+            <Route path="/*" element={<Navigate to="/login" />} />
+          )}
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
